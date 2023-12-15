@@ -23,7 +23,7 @@ est_food_2012_2022 = (expfood_2012_2022.merge(CPIfood_2012_2022, on=['year', 're
 
 est_food = pd.concat([est_food_1995_2011, est_food_2012_2022]).sort_values(by=['region', 'year'])
 
-# 4. Calculate chained inflation and relative price
+# 3. Calculate chained inflation and relative price
 def chained_inflation(CPI):
     chain_infl = np.zeros(len(CPI))
     CPI = CPI / 100
@@ -46,7 +46,7 @@ est_food = (est_food.groupby('region')
                     real_total_exp=lambda x: np.log(x['total_exp']) - np.log(x['chain_infl_overall']))
             .reset_index(drop=True))
 
-# 5. Merge other control variables
+# 4. Merge other control variables
 household = pd.read_excel(f"{data_path}/household.xlsx")
 unemployment = pd.read_excel(f"{data_path}/unemployment.xlsx")
 dependencyrate = pd.read_excel(f"{data_path}/dependencyrate.xlsx")
@@ -62,7 +62,7 @@ est_food = (est_food.merge(control, on=['year', 'region'], how='left')
 # Write to Stata file
 est_food.to_stata(f"{data_path}/Estimation Food.dta")
 
-# 6. Data check
+# 5. Data check
 est_food_long = pd.melt(est_food, id_vars=['year'], value_vars=['price_CPI_food', 'food_exp_share', 'real_total_exp'])
 
 plt.figure(figsize=(10, 6))
